@@ -1,0 +1,354 @@
+<html>
+
+<head>
+    <title>TaTeTi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #212529;
+        }
+
+        hr.solid {
+            border-top: 8px solid #bbb;
+        }
+
+        hr.rounded {
+            border-top: 8px solid #bbb;
+            border-radius: 5px;
+        }
+
+        hr.dashed {
+            border-top: 8px dashed #bbb;
+        }
+
+        .vertical {
+            width: 50%;
+            margin-left: auto;
+            margin-right: auto;
+            border-left: 8px dashed #bbb;
+            height: 100%;
+        }
+
+        table {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .divider-horizontal {
+            border-top: 8px solid #bbb;
+            border-radius: 5px;
+        }
+
+        .fondo {
+            z-index: 1;
+            position: absolute;
+            animation-name: ejemplo;
+            animation-duration: 5s;
+            animation-iteration-count: infinite;
+        }
+
+        .present {
+            width: 100%;
+            height: 100%;
+        }
+
+        .present-active {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0;
+            position: absolute;
+            transition: all 1s ease-out;
+        }
+
+        .present-del {
+            width: 0%;
+            height: 0%;
+        }
+
+        #tablero {
+            padding-top: 10%;
+        }
+
+        .winner {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            position: absolute;
+            animation-name: ganador;
+            animation-duration: 1s;
+            background-color: blue;
+        }
+        .Z1{
+            z-index: 1;
+            position: relative;
+        }
+
+        .winner-out {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            position: absolute;
+            animation-name: ganador-out;
+            animation-duration: 1s;
+        }
+
+        .winner-out-de {
+            width: 0%;
+            height: 0%;
+        }
+
+        @keyframes eliminar {
+            0% {
+                background-color: red;
+                opacity: 100%;
+            }
+
+            50% {
+                background-color: red;
+                opacity: 50%;
+            }
+
+            100% {
+                background-color: red;
+                opacity: 0%;
+            }
+        }
+
+        @keyframes ejemplo {
+            0% {
+                background-color: red;
+            }
+
+            25% {
+                background-color: yellow;
+            }
+
+            50% {
+                background-color: violet;
+            }
+
+            75% {
+                background-color: turquoise;
+            }
+
+            100% {
+                background-color: red;
+            }
+        }
+
+        @keyframes ganador {
+            from {
+                margin-left: 100%;
+            }
+
+            to {
+                margin-left: 0%;
+                background-color: blue;
+            }
+        }
+
+        @keyframes ganador-out {
+            from {
+                margin-left: 0%;
+                background-color: blue;
+            }
+
+            to {
+                margin-left: 100%;
+
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="front" onclick="cambiar_clase()" class="present fondo"></div>
+    <div id="winner" onclick="ganador()" class="text-white"><div id="test" class="text-white Z1"></div></div>
+    <div id="tablero">
+        <table>
+            <tr class="divider-horizontal">
+                <th id="1"><button class="btn btn-primary">1</button></th>
+                <th id="2"><button class="btn btn-primary">2</button></th>
+                <th id="3"><button class="btn btn-primary">3</button></th>
+            </tr>
+            <tr class="divider-horizontal">
+                <th id="4"><button class="btn btn-primary">4</button></th>
+                <th id="5"><button class="btn btn-primary">5</button></th>
+                <th id="6"><button class="btn btn-primary">6</button></th>
+            </tr>
+            <tr class="divider-horizontal">
+                <th id="7"><button class="btn btn-primary">7</button></th>
+                <th id="8"><button class="btn btn-primary">8</button></th>
+                <th id="9"><button class="btn btn-primary">9</button></th>
+            </tr>
+        </table>
+    </div>
+    <script type="text/javascript">
+
+        //Botones
+        var uno = document.getElementById("1");
+        var dos = document.getElementById("2");
+        var tres = document.getElementById("3");
+        var cuatro = document.getElementById("4");
+        var cinco = document.getElementById("5");
+        var seis = document.getElementById("6");
+        var siete = document.getElementById("7");
+        var ocho = document.getElementById("8");
+        var nueve = document.getElementById("9");
+
+
+        //winner
+        var divWinner = document.getElementById("winner");
+
+
+        //array de control
+        var control_uno = [1, 2, 3];
+        var control_dos = [4, 5, 6];
+        var control_tres = [7, 8, 9];
+        var control_cuatro = [1, 4, 7];
+        var control_cinco = [2, 5, 8];
+        var control_seis = [3, 6, 9];
+        var control_siete = [1, 5, 9];
+        var control_ocho = [3, 5, 7];
+        var controle = [control_uno, control_dos, control_tres, control_cuatro, control_cinco, control_seis, control_siete, control_ocho];
+
+        //array player 1
+        var arr_p1 = [];
+        //array player 2
+        var arr_p2 = [];
+
+
+        var th = document.getElementsByTagName("button");
+
+        for (var i = 0; i < th.length; i++) {
+            th[i].addEventListener("click", this.turnos);
+        }
+
+        //Turnos
+        var jugadores = 1;
+
+        //Verificar ganador
+        var p1_win = 0;
+        var p2_win = 0;
+
+        //Perdedores
+        var perdedores = 0;
+
+        //funciones
+
+        function turnos(e) {
+
+            if (jugadores == 1) {
+                jugadores = 2;
+                if (arr_p1.length <= 5) {
+                    if (e.path[0].className == "btn btn-primary") {
+                        e.path[0].className = "btn btn-danger";
+                        arr_p1.push(parseInt(e.path[0].innerHTML));
+                    }
+                }
+            } else if (jugadores == 2) {
+                jugadores = 1;
+                if (arr_p2.length <= 5) {
+                    if (e.path[0].className == "btn btn-primary") {
+                        e.path[0].className = "btn btn-warning";
+                        arr_p2.push(parseInt(e.path[0].innerHTML));
+                    }
+                }
+            }
+
+            if (arr_p1.length == 3 || arr_p1.length == 4 || arr_p1.length == 5) {
+                if (rellenar(arr_p1, controle, p1_win) == true) {
+                    ganador();
+                    reset();
+                } else { perdedores = perdedores + 1; }
+            }
+
+            if (arr_p2.length == 3 || arr_p2.length == 4 || arr_p2.length == 5) {
+                if (rellenar(arr_p2, controle, p2_win) == true) {
+                    ganador();
+                    reset();
+                } else { perdedores = perdedores + 1; }
+            }
+
+            if (perdedores == 9) {
+                alert('empate');
+                reset();
+            }
+        }
+
+        function comprobar(arrCompare, arrcontrol, p_win) {
+            arrCompare.sort();
+            for (i = 0; i < arrCompare.length; i++) {
+                for (j = 0; j < arrcontrol.length; j++) {
+                    if (arrCompare[i] == arrcontrol[j]) {
+                        p_win = p_win + 1;
+                    }
+                }
+            }
+            return p_win;
+        }
+
+
+        function rellenar(arr, arrcontrol, p_win) {
+            var ganador
+            arrcontrol.forEach((arrcontrol) => {
+                if (comprobar(arr, arrcontrol, p_win) == 3) {
+                    ganador = true;
+                }
+            });
+            return ganador;
+        }
+
+        function reset() {
+            jugadores = 1;
+            arr_p1 = [];
+            arr_p2 = [];
+            p1_win = 0;
+            p2_win = 0;
+            perdedores = 0;
+            for (var i = 0; i < th.length; i++) {
+                th[i].className = "btn btn-primary";
+            }
+            var div = document.getElementById("winner");
+            div.textContent = "";
+        }
+
+        function cambiar_clase() {
+            var div = document.getElementById("front");
+            if (div.className == "present fondo") {
+                div.className = "present-active fondo";
+            }
+            setTimeout(eliminar_class, 1200);
+            function eliminar_class() {
+                if (div.className == "present-active fondo") {
+                    div.className = "present-del"
+                }
+            }
+        }
+
+        function ganador(player) {
+            if (divWinner.className == "text-white") {
+                divWinner.className = "winner text-white";
+            } else if (divWinner.className == "winner text-white") {
+                divWinner.className = "winner-out text-white";
+                setTimeout(eliminar_class, 1000);
+            } else if (divWinner.className == "winner-out-del") {
+                divWinner.className = "winner text-white";
+            }
+
+            function eliminar_class() {
+                if (divWinner.className == "winner-out text-white") {
+                    divWinner.className = "winner-out-del";
+                    divWinner.textContent = "";
+                }
+            }
+        }
+
+    </script>
+</body>
+
+</html>
