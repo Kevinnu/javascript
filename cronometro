@@ -1,0 +1,323 @@
+<html>
+
+<head>
+    <title>Cronometro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @keyframes tiempos {
+            from {
+                margin-left: 100%;
+                width: 50%;
+            }
+
+            to {
+                margin-left: 0%;
+                width: 100%;
+            }
+        }
+
+        .tiempos {
+            animation-duration: 1s;
+            animation-name: tiempos;
+        }
+
+        @media screen {
+            body {
+                background-color: #212529;
+            }
+        }
+
+        @media screen and (min-width:801px) {
+            span {
+                font-size: 120px;
+            }
+
+            #principal {
+                margin-top: 10%;
+            }
+
+            #inicio {
+                width: 300px;
+                height: 65px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            #reset,
+            #vuelta {
+                width: 300px;
+                height: 40px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media screen and (max-width:800px) {
+            span {
+                font-size: 60px;
+            }
+
+            #principal {
+                margin-top: 10%;
+            }
+
+            #inicio {
+                width: 200px;
+                height: 70px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            #reset,
+            #vuelta {
+                width: 200px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media (max-width:400px) {
+            span {
+                font-size: 70px;
+            }
+
+            #principal {
+                margin-top: 10%;
+            }
+
+            #inicio {
+                width: 200px;
+                height: 70px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            #reset,
+            #vuelta {
+                width: 200px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media (max-width:320px) {
+            span {
+                font-size: 50px;
+            }
+
+            #principal {
+                margin-top: 20%;
+            }
+
+            #inicio {
+                width: 200px;
+                height: 70px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            #reset,
+            #vuelta {
+                width: 200px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="principal" class="container text-center text-white col-md-8">
+        <div>
+            <span id="hora"></span>
+            <span id="minutos"></span>
+            <span id="segundos"></span>
+        </div>
+        <div class="d-grid gap-2">
+            <button class="btn btn-warning" id="inicio">Iniciar<i class="bi bi-play"></i></button>
+            <button class="btn btn-danger" id="reset">Reiniciar</button>
+            <button class="btn btn-warning btn-block" id="vuelta">vuelta</button>
+        </div>
+        <div>
+            <span id="laphoras"></span>
+            <span id="lapminutos"></span>
+            <span id="lapsegundos"></span>
+        </div>
+        <div id="laps" class="mt-5">
+            <ol id="ullap"></ol>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        (function () {
+            //variables
+            var hora = 0;
+            var minutos = 0;
+            var segundos = 0;
+            var control = false;
+            var laphora = 0;
+            var lapminutos = 0;
+            var lapsegundos = 0;
+            var controlLap = false;
+            var controlLapHora = 0;
+            var controlLapMinutos = 0;
+            var controlLapSegundos = 0;
+
+            //Asignando valores iniciales al cronometro
+            var spanhora = document.getElementById("hora");
+            spanhora.innerHTML = "0" + hora;
+            var spanminutos = document.getElementById("minutos");
+            spanminutos.innerHTML = ":0" + minutos;
+            var spansegundos = document.getElementById("segundos");
+            spansegundos.innerHTML = ":0" + segundos;
+
+            //Elementos HTML
+            var iniciar = document.getElementById("inicio")
+            var reset = document.getElementById("reset")
+            var vuelta = document.getElementById("vuelta")
+            var body = document.getElementsByTagName("body")
+            var pvueltah = document.getElementById("laphoras")
+            var pvueltam = document.getElementById("lapminutos")
+            var pvueltas = document.getElementById("lapsegundos")
+            var laps = document.getElementById("laps")
+            var ullap = document.getElementById("ullap")
+
+            //Eventos
+            iniciar.addEventListener("click", start);
+            reset.addEventListener("click", resetcrono);
+            vuelta.addEventListener("click", lap)
+
+            //Funciones
+            function crono() {
+
+                if (minutos >= 59) {
+                    hora++
+                    minutos = 0
+                }
+                if (segundos >= 99) {
+                    minutos++
+                    segundos = 0
+                }
+                segundos = segundos + 1;
+
+                if (segundos < 10) {
+                    spansegundos.innerHTML = ":0" + segundos
+                } else {
+                    spansegundos.innerHTML = ":" + segundos
+                }
+
+                if (minutos < 10) {
+                    spanminutos.innerHTML = " :0" + minutos
+                } else {
+                    spanminutos.innerHTML = " :" + minutos
+                }
+
+                if (hora < 10) {
+                    spanhora.innerHTML = "0" + hora
+                } else {
+                    spanhora.innerHTML = hora
+                }
+            }
+
+            function start() {
+
+                if (control == false) {
+                    control = true
+                    interval = setInterval(crono, 10)
+
+                    if (iniciar.className == "btn btn-warning" && iniciar.textContent == "Iniciar") {
+                        iniciar.className = "btn btn-primary"
+                        iniciar.textContent = "Detener"
+                        var icono = document.createElement("i");
+                        icono.setAttribute("class", "bi bi-stop");
+                        iniciar.appendChild(icono);
+                    }
+                    iniciar.removeEventListener("click", start)
+                    iniciar.addEventListener("click", stop)
+                }
+
+            }
+            function stop() {
+                if (control == true) {
+                    clearInterval(interval)
+                    control = false
+                    iniciar.removeEventListener("click", stop)
+                    iniciar.addEventListener("click", start)
+
+                    if (iniciar.className == "btn btn-primary" && iniciar.textContent == "Detener") {
+                        iniciar.className = "btn btn-warning"
+                        iniciar.textContent = "Iniciar"
+                        var icono = document.createElement("i");
+                        icono.setAttribute("class", "bi bi-play");
+                        iniciar.appendChild(icono);
+                    }
+                }
+            }
+
+            function resetcrono() {
+                stop();
+                var li = document.getElementsByTagName("li");
+                hora = 0;
+                minutos = 0;
+                segundos = 0;
+                laphora = 0;
+                lapminutos = 0;
+                lapsegundos = 0;
+                controlLapHora = 0;
+                controlLapMinutos = 0;
+                controlLapSegundos = 0;
+                spanhora.innerHTML = "0" + hora
+                spanminutos.innerHTML = ":0" + minutos
+                spansegundos.innerHTML = ":0" + segundos
+
+                for (var i = 0; i < li.length; i + 1) {
+                    ullap.removeChild(li[i]);
+                }
+            }
+            function lap() {
+
+                if (controlLap == false) {
+                    controlLap = true;
+                    laphora = hora - controlLapHora;
+                    lapminutos = minutos - controlLapMinutos;
+                    lapsegundos = segundos - controlLapSegundos;
+                    controlLapHora = hora;
+                    controlLapMinutos = minutos;
+                    controlLapSegundos = segundos;
+                } else {
+                    controlLap = false;
+                    laphora = hora - controlLapHora;
+                    lapminutos = minutos - controlLapMinutos;
+                    lapsegundos = segundos - controlLapSegundos;
+                    controlLapHora = hora;
+                    controlLapMinutos = minutos;
+                    controlLapSegundos = segundos;
+                }
+
+                if (lapsegundos < 0) {
+                    lapsegundos = 99 - lapsegundos
+                    lapminutos = lapminutos - 1
+                }
+
+                if (lapminutos < 10) {
+                    lapminutos = "0" + lapminutos;
+                }
+
+                if (laphora < 10) {
+                    laphora = "0" + laphora;
+                }
+                var new_li = document.createElement("li");
+                new_li.setAttribute("class", "h1 tiempos");
+                var contenido = document.createTextNode(laphora + " : " + lapminutos + " : " + lapsegundos);
+                new_li.appendChild(contenido);
+                ullap.append(new_li);
+            }
+        })();
+    </script>
+</body>
+</html>
